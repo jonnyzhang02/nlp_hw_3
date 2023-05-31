@@ -1,0 +1,1 @@
+{'B_PER': 0, 'I_LOC': 1, 'I_T': 2, 'I_ORG': 3, 'B_LOC': 4, 'I_PER': 5, 'O': 6, 'B_T': 7, 'B_ORG': 8, '<START>': 9, '<STOP>': 10}
