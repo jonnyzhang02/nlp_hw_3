@@ -1,0 +1,63 @@
+序列标注编程作业：基于BiLSTM-CRF的命名实体识别
+
+
+
+作业说明：
+
+1、语料：
+
+1.1训练语料：train.txt为字(符号)序列，train_TAG.txt为对应train.txt中每一个字(符号)的实体标签。例如：
+
+train.txt第一句：人 民 网 1 月 1 日 讯 据 《 纽 约 时 报 》 报 道 ，
+
+train_TAG.txt中对位的标签为：O O O B_T I_T I_T I_T O O O B_LOC I_LOC O O O O O O
+
+1.2发展集dev.txt及其标注dev_TAG.txt（标注规范和train_TAG.txt中的相同），可用于训练过程中进行模型选择。
+
+1.3测试语料：test.txt：用于测试模型。
+
+
+
+2、基于train.txt和train_TAG.txt数据训练一个BiLSTM-CRF命名实体识别模型，进而为test.txt进行序列标注，输出标签文件，标签文件输出格式与train_TAG.txt相同。即保持test.txt中的行次序、分行信息以及行内次序，行内每个字的标签之间用空格分隔。输出文件命名方式：学号.txt。
+
+3、所有输出文本均采用Unicode(UTF-8)编码、算法采用Python(3.0以上版本)实现
+
+4、提交时间和方式：6月15日24:00之前提交作业(以收到时间为准)。
+
+5、提交材料：
+
+5.1、BiLSTM-CRF模型和训练算法的文本说明，提交doc(或pdf)文件，文件命名方式：学号；文本说明至少包括：
+
+==给出标注集。序列标注的标签集是train_TAG.txt中的所有不同的标签组成的集合，请自行统计获得，标签集是后续训练模型和标注的基础，请注意统计完整。
+
+==对模型参数和执行细节进行说明。模型参数和执行细节应至少包含：所用初始词向量来源、词向量维数、Bi-LSTM的网络结构参数、训练算法的学习率、训练批次大小、训练轮数等；
+
+==给出训练损失和发展集性能随时间变化的曲线：每轮记录训练loss，同时每一轮在发展集上进行测试，获得其标注性能(非O标签的F1值)，从而选择合适的训练轮次，在此训练轮次后的参数作为模型最后参数，用于对test.txt进行标注。
+
+
+5.2、提交完整的实现代码，其中关键部分需要进行注释说明：与文本说明中的参数和执行细节对应。
+
+
+5.3、对test.txt进行序列标注得到的标签文件
+
+
+提交txt文件，文件命名方式：学号.txt
+
+
+6、参考资料：
+
+6.1、论文：
+
+[HuangZH2015-BiLSTM-CRF]Zhiheng Huang, Wei Xu, Kai Yu. Bidirectional LSTM-CRF Models for Sequence Tagging.arXiv 2015.
+
+
+
+[Lample2016NAACL]Guillaume
+
+Lample, Miguel Ballesteros, Sandeep Subramanian, Kazuya Kawakami, Chris Dyer.
+
+Neural Architectures for Named Entity Recognition. NAACL 2016.
+
+6.2、代码
+
+https://pytorch.org/tutorials/beginner/nlp/advanced_tutorial.htm
