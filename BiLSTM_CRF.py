@@ -55,7 +55,10 @@ def dispose_train_data(text_file_, tag_file_):
     @param text_file_: 训练数据集路径
     @param tag_file_: 训练标签集路径
     """
-    with open(text_file_, 'r', encoding='utf-8') as f_text, open(tag_file_, 'r', encoding='utf-8') as f_tag:
+    with open(text_file_, 'r',
+              encoding='utf-8') as f_text, open(tag_file_,
+                                                'r',
+                                                encoding='utf-8') as f_tag:
         text_lines = f_text.readlines()  # 读取文本数据
         tag_lines = f_tag.readlines()  # 读取标签数据
 
@@ -72,7 +75,7 @@ def dispose_train_data(text_file_, tag_file_):
     # 处理数据
     data = []
 
-    # data_mask = [] 
+    # data_mask = []
     for i in range(len(text_lines)):  # 一行一行处理
         text_line = text_lines[i].strip().split(' ')  # 以空格分割
         tag_line = tag_lines[i].strip().split(' ')  # 以空格分割
@@ -130,7 +133,6 @@ def log_sum_exp(vec):
 
 
 class BiLSTM_CRF(nn.Module):
-
     def __init__(self, vocab_size, tag2id, embedding_dim, hidden_dim):
         super(BiLSTM_CRF, self).__init__()
         self.embedding_dim = embedding_dim  # 词向量的维度
@@ -140,8 +142,10 @@ class BiLSTM_CRF(nn.Module):
         self.tagset_size = len(tag2id)  # 标签集合的大小
 
         self.word_embeds = nn.Embedding(vocab_size, embedding_dim)  # 词嵌入矩阵
-        self.lstm = nn.LSTM(embedding_dim, hidden_dim // 2,
-                            num_layers=1, bidirectional=True)  # 双向LSTM
+        self.lstm = nn.LSTM(embedding_dim,
+                            hidden_dim // 2,
+                            num_layers=1,
+                            bidirectional=True)  # 双向LSTM
 
         # 将LSTM的输出映射到标签空间
         self.hidden2tag = nn.Linear(hidden_dim, self.tagset_size)  # 线性层
@@ -183,8 +187,8 @@ class BiLSTM_CRF(nn.Module):
             alphas_t = []  # 这个时间步的前向张量
             for next_tag in range(self.tagset_size):
                 # 广播发射分数：无论以前的标签是什么，它都是相同的
-                emit_score = feat[next_tag].view(
-                    1, -1).expand(1, self.tagset_size)
+                emit_score = feat[next_tag].view(1, -1).expand(
+                    1, self.tagset_size)
                 # trans_score的第i项是从i转移到next_tag的分数
                 trans_score = self.transitions[next_tag].view(1, -1)
                 # next_tag_var的第i项是在我们执行对数-求和-指数之前的边(i -> next_tag)的值
@@ -217,7 +221,8 @@ class BiLSTM_CRF(nn.Module):
         @return: 标签序列的分数
         """
         score = torch.zeros(1)
-        tags = torch.cat([torch.tensor([self.tag2id[START_TAG]], dtype=torch.long), tags])
+        tags = torch.cat(
+            [torch.tensor([self.tag2id[START_TAG]], dtype=torch.long), tags])
         for i, feat in enumerate(feats):
             score = score + \
                     self.transitions[tags[i + 1], tags[i]] + feat[tags[i + 1]]
@@ -326,23 +331,29 @@ def predict_dev_data(dev_data, epoch):
             dev_tags_piece = []  # 保存每个句子的标签
             for each in piece[1]:
                 dev_tags_piece.append(tag2id[each])
-            dev_tags_piece = torch.tensor(dev_tags_piece, dtype=torch.long)  # 将标签转换成id
+            dev_tags_piece = torch.tensor(dev_tags_piece,
+                                            dtype=torch.long)  # 将标签转换成id
             dev_true_tags.append(dev_tags_piece)
 
             # 提取出标签
         dev_predicts_tag = []  # 保存预测的标签
         for i in range(len(dev_predicts)):  # 逐个句子进行预测
-            dev_predicts_tag.append(torch.tensor(dev_predicts[i][1], dtype=torch.long))  # 提取出标签
+            dev_predicts_tag.append(
+                torch.tensor(dev_predicts[i][1], dtype=torch.long))  # 提取出标签
 
-        with open(f'./{EPOCH}_epoch_model/dev_true_tags.pkl', 'wb') as f:  # 保存真实的标签
+        with open(  f'./{EPOCH}_epoch_model/dev_true_tags.pkl',
+                    'wb') as f:  # 保存真实的标签
             pickle.dump(dev_true_tags, f)
-        with open(f'./{EPOCH}_epoch_model/dev_predicts_tag_{epoch}.pkl', 'wb') as f:  # 保存预测的标签
+        with open(f'./{EPOCH}_epoch_model/dev_predicts_tag_{epoch}.pkl',
+                    'wb') as f:  # 保存预测的标签
             pickle.dump(dev_predicts_tag, f)
 
     else:
-        with open(f'./{EPOCH}_epoch_model/dev_predicts_tag_{epoch}.pkl', 'rb') as f:  # 读取预测的标签
+        with open(f'./{EPOCH}_epoch_model/dev_predicts_tag_{epoch}.pkl',
+                    'rb') as f:  # 读取预测的标签
             dev_predicts_tag = pickle.load(f)
-        with open(f'./{EPOCH}_epoch_model/dev_true_tags.pkl', 'rb') as f:  # 读取真实的标签
+        with open(f'./{EPOCH}_epoch_model/dev_true_tags.pkl',
+                    'rb') as f:  # 读取真实的标签
             dev_true_tags = pickle.load(f)
 
     # print("dev_predicts_tag示例:",dev_predicts_tag[150])
@@ -369,7 +380,9 @@ def evaluate_model(dev_predicts_tag, dev_true_tags):
     predicted_tags_flat = predicted_tags_flat[mask]
 
     # 然后我们就可以计算评估指标了：
-    precision = precision_score(true_tags_flat, predicted_tags_flat, average='macro')
+    precision = precision_score(true_tags_flat,
+                                predicted_tags_flat,
+                                average='macro')
     recall = recall_score(true_tags_flat, predicted_tags_flat, average='macro')
     f1 = f1_score(true_tags_flat, predicted_tags_flat, average='macro')
 
@@ -404,7 +417,7 @@ EPOCH = 9  # 训练轮数
 
 y = [[], [], []]
 IS_TRAIN = False
-# training_data = training_data[:1000] 
+# training_data = training_data[:1000]
 if IS_TRAIN:
 
     print("****************准备数据****************")
@@ -462,7 +475,6 @@ if IS_TRAIN:
         evaluate_model(dev_predicts_tag, dev_true_tags)
         print("loss:", loss)
         print("===========================================")
-
 
 else:
     with open(f"./{EPOCH}_epoch_model/word2id.pkl", "rb") as f:
@@ -533,7 +545,8 @@ def output(model_num):
 
     id2tag = {v: k for k, v in tag2id.items()}
     # 将预测的标签转换成标签名
-    test_predicts_tag = [[id2tag[i] for i in piece] for piece in test_predicts_tag]
+    test_predicts_tag = [[id2tag[i] for i in piece]
+                         for piece in test_predicts_tag]
 
     with open('2020212185.txt', 'w', encoding='utf-8') as f:
         for i in range(len(test_predicts_tag)):
@@ -546,12 +559,10 @@ output(7)
 
 # dev_predicts = dev_predicts.tolist()
 
-
 # with open('./10_epoch_model/dev_predicts.txt', 'w') as f:
 #     for i in dev_predicts:
 #         f.write(str(i))
 #         f.write('\n')
-
 """
 之前的旧版实现
 """
@@ -570,7 +581,6 @@ output(7)
 #         self.vocab_size = vocab_size
 #         self.tag2id = tag2id
 #         self.tagset_size = len(tag2id)
-
 
 #         self.word_embeds = nn.Embedding(vocab_size, embedding_dim)
 #         # 初始化词向量矩阵，这里可以使用预训练的词向量
