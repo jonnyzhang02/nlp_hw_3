@@ -1,11 +1,11 @@
 """
-Author: jonnyzhang02 71881972+jonnyzhang02@users.noreply.github.com
-Date: 2023-05-27 09:20:17
-LastEditors: jonnyzhang02 71881972+jonnyzhang02@users.noreply.github.com
-LastEditTime: 2023-05-31 09:24:57
-FilePath: /nlp_hw_3/BiLSTM_CRF.py
-Description: coded by ZhangYang@BUPT, my email is zhangynag0207@bupt.edu.cn
+@  Author       : jonnyzhang02 71881972+jonnyzhang02@users.noreply.github.com
+@  LastEditTime : 2023-06-29 13:28
+@  FilePath     : \nlp_hw_3\BiLSTM_CRF.py
+@  
+@  coded by ZhangYang@BUPT, my email is zhangynag0207@bupt.edu.cn
 """
+
 
 import pickle
 import random
@@ -105,6 +105,7 @@ def dispose_train_data(text_file_, tag_file_):
 torch.manual_seed(1)  # 设置随机种子
 
 
+
 def argmax(vec):
     # 以int形式返回argmax
     _, idx = torch.max(vec, 1)
@@ -126,6 +127,11 @@ def prepare_sequence(seq, to_ix):
 
 # Compute log sum exp in a numerically stable way for the forward algorithm
 def log_sum_exp(vec):
+    """
+    @description:  计算前向算法的对数和
+    @param vec: 传入的向量
+    @return: 返回对数和
+    """
     max_score = vec[0, argmax(vec)]
     max_score_broadcast = max_score.view(1, -1).expand(1, vec.size()[1])
     return max_score + \
@@ -133,7 +139,7 @@ def log_sum_exp(vec):
 
 
 class BiLSTM_CRF(nn.Module):
-    def __init__(self, vocab_size, tag2id, embedding_dim, hidden_dim):
+    def __init__(self, vocab_size, tag2id, embedding_dim, hidden_dim):   
         super(BiLSTM_CRF, self).__init__()
         self.embedding_dim = embedding_dim  # 词向量的维度
         self.hidden_dim = hidden_dim  # 隐藏层的维度
